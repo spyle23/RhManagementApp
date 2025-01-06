@@ -14,23 +14,23 @@ const navigation = {
   RH: [
     { name: "Dashboard", href: "/dashboard", icon: ChartBarIcon },
     { name: "Employés", href: "/employees", icon: UsersIcon },
-    { name: "Paramètres", href: "/settings", icon: Cog6ToothIcon },
     { name: "Mes Congés", href: "/my-leaves", icon: CalendarIcon },
+    { name: "Paramètres", href: "/settings", icon: Cog6ToothIcon },
   ],
   Admin: [
     { name: "Dashboard", href: "/dashboard", icon: ChartBarIcon },
     { name: "Employés", href: "/employees", icon: UsersIcon },
     { name: "Gestion des utilisateurs", href: "/users", icon: UsersIcon },
-    { name: "Paramètres", href: "/settings", icon: Cog6ToothIcon },
     { name: "Liste des congés", href: "/leaves", icon: CalendarIcon },
+    { name: "Paramètres", href: "/settings", icon: Cog6ToothIcon },
   ],
   Manager: [
     { name: "Dashboard", href: "/dashboard", icon: ChartBarIcon },
     { name: "Équipe", href: "/team", icon: UsersIcon },
     { name: "Employés", href: "/employees", icon: UsersIcon },
     { name: "Liste des équipes", href: "/teams", icon: UserGroupIcon },
-    { name: "Paramètres", href: "/settings", icon: Cog6ToothIcon },
     { name: "Mes Congés", href: "/my-leaves", icon: CalendarIcon },
+    { name: "Paramètres", href: "/settings", icon: Cog6ToothIcon },
   ],
   Employee: [
     { name: "Mes Congés", href: "/my-leaves", icon: CalendarIcon },
