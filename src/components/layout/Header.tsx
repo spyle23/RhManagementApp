@@ -1,13 +1,32 @@
+import GetUserById from "@/api/auth/GetUserById";
 import { useApplicationHook } from "@/hook/useApplicationHook";
 import { BellIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+type IDisplayAvatar = {
+  withPicture: boolean;
+  display: string;
+};
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { logoutApp } = useApplicationHook();
+  const { logoutApp, user } = useApplicationHook();
+  const [displayAvatar, setDisplayAvatar] = useState<IDisplayAvatar>();
   const router = useRouter();
+
+  useEffect(() => {
+    if (user) {
+      const getUserById = new GetUserById(user.token);
+      getUserById.execute(user.userId).then((u) => {
+        setDisplayAvatar({
+          withPicture: u.picture ? true : false,
+          display: u.picture ? u.picture : u.firstName.charAt(0),
+        });
+      });
+    }
+  }, [user]);
 
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
@@ -25,7 +44,7 @@ export default function Header() {
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Image
-                src="/logo.svg"
+                src="/images/MC.png"
                 alt="Logo"
                 width={40}
                 height={40}
@@ -38,17 +57,28 @@ export default function Header() {
               <BellIcon className="h-6 w-6 text-gray-500" />
             </button>
             <div className="relative">
-              <button className="flex items-center gap-2" onClick={toggleMenu}>
-                <div className="h-8 w-8 rounded-full bg-gray-200">
-                  <Image
-                    src="/avatar-placeholder.png"
-                    alt="Avatar"
-                    width={32}
-                    height={32}
-                    className="rounded-full"
-                  />
-                </div>
-              </button>
+              {displayAvatar && (
+                <button
+                  className="flex items-center gap-2"
+                  onClick={toggleMenu}
+                >
+                  <div className="h-8 w-8 rounded-full bg-gray-200 flex justify-center items-center">
+                    {displayAvatar.withPicture ? (
+                      <Image
+                        src={displayAvatar.display}
+                        alt="Avatar"
+                        width={32}
+                        height={32}
+                        className="rounded-full"
+                      />
+                    ) : (
+                      <span className="text-sm font-medium text-primary-700">
+                        {displayAvatar.display}
+                      </span>
+                    )}
+                  </div>
+                </button>
+              )}
               {isMenuOpen && (
                 <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
                   <div className="py-1">

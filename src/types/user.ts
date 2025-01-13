@@ -10,3 +10,12 @@ export type User = {
   token: string;
   role: Role;
 };
+
+export type UserHeader = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  cin: number;
+  email: string;
+  picture: string;
+}
