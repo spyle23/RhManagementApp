@@ -67,7 +67,6 @@ export default function TeamsListPage() {
   };
 
   return (
-    <DashboardLayout role="Manager">
       <div className="space-y-6">
         {/* Header Section */}
         <div className="flex justify-between items-center">
@@ -154,6 +153,5 @@ export default function TeamsListPage() {
           ))}
         </div>
       </div>
-    </DashboardLayout>
   );
 }

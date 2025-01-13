@@ -1,7 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { BellIcon, ChevronRightIcon, CogIcon, UserIcon } from "@heroicons/react/24/outline";
+import {
+  BellIcon,
+  ChevronRightIcon,
+  CogIcon,
+  UserIcon,
+} from "@heroicons/react/24/outline";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { useRouter } from "next/navigation";
 
@@ -15,8 +20,7 @@ export default function SettingsPage() {
   ];
 
   return (
-    <DashboardLayout role="Manager">
-      <div className="space-y-6">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Paramètres</h1>
@@ -36,6 +40,5 @@ export default function SettingsPage() {
         ))}
       </div>
     </div>
-    </DashboardLayout>
   );
 }
