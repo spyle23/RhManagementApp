@@ -1,15 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import DashboardLayout from "@/components/layout/DashboardLayout";
+import { ChangeEvent, useState } from "react";
 import { PlusIcon } from "@heroicons/react/24/outline";
-
-type User = {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-};
+import { BaseAction, UserFilters } from "@/types/query";
+import { UserHandler } from "@/utils/UserHandler";
+import { useGenericFilters } from "@/hook/useGenericFilters";
+import GetUsersByFilters from "@/api/auth/GetUsersByFilters";
+import { UserRoles } from "@/types/user";
+import { BasePagination } from "@/components/pagination/BasePagination";
 
 const roles = ["Admin", "Manager", "Employee", "RH"];
 
@@ -41,27 +39,20 @@ const getRoleEmoji = (role: string) => {
   }
 };
 
+const reducerFilters = (state: UserFilters, action: BaseAction) =>
+  UserHandler[action.type] ? UserHandler[action.type](state, action) : state;
+
+const initialState: UserFilters = {
+  pageNumber: 1,
+  pageSize: 10,
+};
+
 export default function UsersPage() {
-  const [users, setUsers] = useState<User[]>([
-    {
-      id: "1",
-      name: "Marie Laurent",
-      email: "marie.laurent@company.com",
-      role: "Admin",
-    },
-    {
-      id: "2",
-      name: "Thomas Martin",
-      email: "thomas.martin@company.com",
-      role: "Manager",
-    },
-    {
-      id: "3",
-      name: "Sophie Dubois",
-      email: "sophie.dubois@company.com",
-      role: "Employee",
-    },
-  ]);
+  const { data, loading, dispatchFilters, stateFilters } = useGenericFilters<
+    UserFilters,
+    UserRoles,
+    GetUsersByFilters
+  >(reducerFilters, initialState, GetUsersByFilters);
 
   const [showModal, setShowModal] = useState(false);
   const [newUser, setNewUser] = useState({
@@ -72,15 +63,16 @@ export default function UsersPage() {
   });
 
   const handleCreateUser = () => {
-    const newUserData = {
-      id: (users.length + 1).toString(),
-      name: `${newUser.firstName} ${newUser.lastName}`,
-      email: newUser.email,
-      role: newUser.role,
-    };
-    setUsers([...users, newUserData]);
     setShowModal(false);
     setNewUser({ firstName: "", lastName: "", email: "", role: roles[0] });
+  };
+
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    dispatchFilters({ type: "searchUser", value: e.target.value });
+  };
+
+  const handleRoleChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    dispatchFilters({ type: "filterRole", value: e.target.value });
   };
 
   return (
@@ -96,58 +88,108 @@ export default function UsersPage() {
         </button>
       </div>
 
-      {/* Users List */}
-      <div className="mt-5 bg-white shadow-sm rounded-lg">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Nom
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Email
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Rôle
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {users.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10">
-                        <div className="h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center">
-                          <span className="text-blue-700 font-medium">
-                            {user.name.charAt(0)}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">
-                          {user.name}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
-                  <td className={`px-6 py-4 whitespace-nowrap`}>
-                    <span
-                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getRoleClass(
-                        user.role
-                      )}`}
-                    >
-                      {getRoleEmoji(user.role)} {user.role}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      <div className="mt-5 flex items-center">
+        <input
+          type="text"
+          placeholder="Rechercher par nom ou email"
+          value={stateFilters.searchTerm}
+          onChange={handleSearch}
+          className="border rounded-md p-2 mr-2 w-full max-w-xs"
+        />
+        <select
+          value={stateFilters.role}
+          onChange={handleRoleChange}
+          className="border rounded-md p-2 mr-2"
+        >
+          <option value={""}>Filtre rôle</option>
+          {roles.map((role) => (
+            <option key={role} value={role}>
+              {role}
+            </option>
+          ))}
+        </select>
+        {/* <button
+          onClick={() => {
+            dispatchFilters({ type: "applyFilters", value: undefined });
+          }}
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+        >
+          Appliquer les filtres
+        </button> */}
       </div>
+
+      {/* Loading Skeleton */}
+      {loading ? (
+        <div className="mt-5">Loading...</div> // Replace with a skeleton component if available
+      ) : (
+        <div className="mt-5 bg-white shadow-sm rounded-lg">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Nom
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Email
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Cin
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Rôle
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {data.datas.map((user) => (
+                  <tr key={user.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0 h-10 w-10">
+                          <div className="h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center">
+                            <span className="text-blue-700 font-medium">
+                              {user.firstName.charAt(0)}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="ml-4">
+                          <div className="text-sm font-medium text-gray-900">
+                            {user.firstName} {user.lastName}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {user.email}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">{user.cin}</td>
+                    <td className={`px-6 py-4 whitespace-nowrap`}>
+                      <span
+                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getRoleClass(
+                          user.role
+                        )}`}
+                      >
+                        {getRoleEmoji(user.role)} {user.role}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {/* Pagination Controls */}
+          <BasePagination
+            currPage={stateFilters.pageNumber}
+            onGoToSpecificPage={(v) =>
+              dispatchFilters({ type: "goSpecificPage", value: v })
+            }
+            onNext={() => dispatchFilters({ type: "goNext", value: undefined })}
+            onPrev={() => dispatchFilters({ type: "goPrev", value: undefined })}
+            totalPage={data.totalPage}
+          />
+        </div>
+      )}
 
       {/* Modal for creating a new user */}
       {showModal && (

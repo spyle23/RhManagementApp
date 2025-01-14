@@ -2,8 +2,8 @@ export type Role = "RH" | "Admin" | "Manager" | "Employee";
 
 export type ILogin = {
   email: string;
-  password:string;
-}
+  password: string;
+};
 
 export type User = {
   userId: number;
@@ -18,4 +18,8 @@ export type UserHeader = {
   cin: number;
   email: string;
   picture: string;
-}
+};
+
+export type UserRoles = {
+  role: Role;
+} & UserHeader;
