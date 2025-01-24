@@ -8,8 +8,8 @@ import { useGenericFilters } from "@/hook/useGenericFilters";
 import GetUsersByFilters from "@/api/auth/GetUsersByFilters";
 import { UserRoles } from "@/types/user";
 import { BasePagination } from "@/components/pagination/BasePagination";
-
-const roles = ["Admin", "Manager", "Employee", "RH"];
+import { AddUserModal } from "./components/AddUserModal";
+import { roles } from "@/constants/roles";
 
 const getRoleClass = (role: string) => {
   switch (role) {
@@ -48,7 +48,7 @@ const initialState: UserFilters = {
 };
 
 export default function UsersPage() {
-  const { data, loading, dispatchFilters, stateFilters } = useGenericFilters<
+  const { data, loading, dispatchFilters, stateFilters, addItem } = useGenericFilters<
     UserFilters,
     UserRoles,
     GetUsersByFilters
@@ -193,93 +193,10 @@ export default function UsersPage() {
 
       {/* Modal for creating a new user */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-            <h2 className="text-xl font-semibold mb-4">Nouvel Utilisateur</h2>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleCreateUser();
-              }}
-            >
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
-                  Prénom
-                </label>
-                <input
-                  type="text"
-                  value={newUser.firstName}
-                  onChange={(e) =>
-                    setNewUser({ ...newUser, firstName: e.target.value })
-                  }
-                  className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
-                  Nom de famille
-                </label>
-                <input
-                  type="text"
-                  value={newUser.lastName}
-                  onChange={(e) =>
-                    setNewUser({ ...newUser, lastName: e.target.value })
-                  }
-                  className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  value={newUser.email}
-                  onChange={(e) =>
-                    setNewUser({ ...newUser, email: e.target.value })
-                  }
-                  className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
-                  Rôle
-                </label>
-                <select
-                  value={newUser.role}
-                  onChange={(e) =>
-                    setNewUser({ ...newUser, role: e.target.value })
-                  }
-                  className="mt-1 block px-4 py-2 w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  {roles.map((role) => (
-                    <option key={role} value={role}>
-                      {role}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="mr-2 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-                >
-                  Annuler
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                >
-                  Créer
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+        <AddUserModal
+          onClose={() => setShowModal(false)}
+          onCreateUser={addItem}
+        />
       )}
     </div>
   );

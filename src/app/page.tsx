@@ -24,7 +24,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (user?.role) {
-      router.push(user.role === "Employee" ? "/dashboard" : "/my-leaves");
+      router.push(user.role !== "Employee" ? "/dashboard" : "/my-leaves");
     }
   }, [user]);
 
@@ -32,7 +32,7 @@ export default function LoginPage() {
     try {
       setLoading(true);
       const user = await signin(data.email, data.password);
-      router.push(user.role === "Employee" ? "/dashboard" : "/my-leaves");
+      router.push(user.role !== "Employee" ? "/dashboard" : "/my-leaves");
     } catch (err) {
       setError("Identifiants incorrects. Veuillez réessayer.");
     } finally {

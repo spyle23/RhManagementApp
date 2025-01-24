@@ -7,4 +7,5 @@ export const UserHandler: IPagination<UserFilters, BaseAction> = {
   changeListPerPage: (state, action) => ({ ...state, pageSize: action.value }),
   searchUser: (state, action) => ({ ...state, searchTerm: action.value }),
   filterRole: (state, action) => ({ ...state, role: action.value }),
+  addUser: (state, action) => ({ ...state,  })
 };

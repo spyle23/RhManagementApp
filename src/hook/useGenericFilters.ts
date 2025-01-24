@@ -44,11 +44,16 @@ export const useGenericFilters = <
     fetchData();
   }, [stateFilters, user]);
 
+  const addItem = (val: TResult) => {
+    setData((curr) => ({ ...curr, datas: [val, ...curr.datas] }));
+  };
+
   return {
     data,
     loading,
     error,
     dispatchFilters,
     stateFilters,
+    addItem
   };
 };

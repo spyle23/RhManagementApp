@@ -22,7 +22,9 @@ export default function Header() {
       getUserById.execute(user.userId).then((u) => {
         setDisplayAvatar({
           withPicture: u.picture ? true : false,
-          display: u.picture ? u.picture : u.firstName.charAt(0),
+          display: u.picture
+            ? process.env.NEXT_PUBLIC_IMAGE_URI + u.picture
+            : u.firstName.charAt(0),
         });
       });
     }
