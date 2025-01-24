@@ -1,7 +1,11 @@
 "use client";
 
 import { ChangeEvent, useState } from "react";
-import { PlusIcon } from "@heroicons/react/24/outline";
+import {
+  PlusIcon,
+  PencilSquareIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import { BaseAction, UserFilters } from "@/types/query";
 import { UserHandler } from "@/utils/UserHandler";
 import { useGenericFilters } from "@/hook/useGenericFilters";
@@ -48,24 +52,15 @@ const initialState: UserFilters = {
 };
 
 export default function UsersPage() {
-  const { data, loading, dispatchFilters, stateFilters, addItem } = useGenericFilters<
-    UserFilters,
-    UserRoles,
-    GetUsersByFilters
-  >(reducerFilters, initialState, GetUsersByFilters);
+  const { data, loading, dispatchFilters, stateFilters, addItem, updateItem } =
+    useGenericFilters<UserFilters, UserRoles, GetUsersByFilters>(
+      reducerFilters,
+      initialState,
+      GetUsersByFilters
+    );
 
   const [showModal, setShowModal] = useState(false);
-  const [newUser, setNewUser] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    role: roles[0],
-  });
-
-  const handleCreateUser = () => {
-    setShowModal(false);
-    setNewUser({ firstName: "", lastName: "", email: "", role: roles[0] });
-  };
+  const [currUser, setCurrUser] = useState<UserRoles>();
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     dispatchFilters({ type: "searchUser", value: e.target.value });
@@ -73,6 +68,16 @@ export default function UsersPage() {
 
   const handleRoleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     dispatchFilters({ type: "filterRole", value: e.target.value });
+  };
+
+  const showUpdate = (user: UserRoles) => {
+    setCurrUser(user);
+    setShowModal(true);
+  };
+
+  const handleClose = () => {
+    setShowModal(false);
+    setCurrUser(undefined);
   };
 
   return (
@@ -139,6 +144,9 @@ export default function UsersPage() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Rôle
                   </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -148,9 +156,17 @@ export default function UsersPage() {
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">
                           <div className="h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center">
-                            <span className="text-blue-700 font-medium">
-                              {user.firstName.charAt(0)}
-                            </span>
+                            {user.picture ? (
+                              <img
+                                src={`${process.env.NEXT_PUBLIC_IMAGE_URI}${user.picture}`}
+                                alt="avatar"
+                                className="w-full rounded-full"
+                              />
+                            ) : (
+                              <span className="text-blue-700 font-medium">
+                                {user.firstName.charAt(0)}
+                              </span>
+                            )}
                           </div>
                         </div>
                         <div className="ml-4">
@@ -173,6 +189,24 @@ export default function UsersPage() {
                         {getRoleEmoji(user.role)} {user.role}
                       </span>
                     </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {user.role !== "Admin" && (
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() => showUpdate(user)}
+                            className="p-1 rounded-full hover:bg-gray-100 text-blue-600"
+                          >
+                            <PencilSquareIcon className="h-5 w-5" />
+                          </button>
+                          <button
+                            // onClick={}
+                            className="p-1 rounded-full hover:bg-gray-100 text-red-600"
+                          >
+                            <TrashIcon className="h-5 w-5" />
+                          </button>
+                        </div>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -194,8 +228,9 @@ export default function UsersPage() {
       {/* Modal for creating a new user */}
       {showModal && (
         <AddUserModal
-          onClose={() => setShowModal(false)}
-          onCreateUser={addItem}
+          onClose={handleClose}
+          onCreateUser={currUser ? updateItem : addItem}
+          user={currUser}
         />
       )}
     </div>

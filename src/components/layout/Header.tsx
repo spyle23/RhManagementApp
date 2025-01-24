@@ -66,12 +66,12 @@ export default function Header() {
                 >
                   <div className="h-8 w-8 rounded-full bg-gray-200 flex justify-center items-center">
                     {displayAvatar.withPicture ? (
-                      <Image
+                      <img
                         src={displayAvatar.display}
                         alt="Avatar"
-                        width={32}
-                        height={32}
-                        className="rounded-full"
+                        // width={32}
+                        // height={32}
+                        className="rounded-full w-full"
                       />
                     ) : (
                       <span className="text-sm font-medium text-primary-700">

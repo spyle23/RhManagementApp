@@ -7,7 +7,7 @@ import { Reducer, useEffect, useReducer, useState } from "react";
 
 export const useGenericFilters = <
   TFIlters extends BaseFilters,
-  TResult,
+  TResult extends { id: number },
   TUseCase extends SecureUseCase &
     UseCase<TFIlters, Promise<BasePagination<TResult>>>
 >(
@@ -48,12 +48,20 @@ export const useGenericFilters = <
     setData((curr) => ({ ...curr, datas: [val, ...curr.datas] }));
   };
 
+  const updateItem = (val: TResult) => {
+    setData((curr) => ({
+      ...curr,
+      datas: curr.datas.map((a) => (a.id === val.id ? val : a)),
+    }));
+  };
+
   return {
     data,
     loading,
     error,
     dispatchFilters,
     stateFilters,
-    addItem
+    addItem,
+    updateItem
   };
 };
