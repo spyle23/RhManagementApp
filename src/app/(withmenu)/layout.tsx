@@ -6,19 +6,22 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function AuthencatedLayout({ children }: any) {
-  const { user } = useApplicationHook();
+  const { user, loadingApp } = useApplicationHook();
   const router = useRouter();
 
   useEffect(() => {
-    if (!user) {
-      console.log("impiry");
+    if (!user && !loadingApp) {
       router.push("signin");
     }
-  }, [user]);
+  }, [user, loadingApp]);
 
   // If user is not defined, you can return a loading state or null
-  if (!user) {
+  if (loadingApp) {
     return <Spinner />;
+  }
+
+  if (!user) {
+    return null;
   }
 
   return <DashboardLayout role={user.role}>{children}</DashboardLayout>;

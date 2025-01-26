@@ -5,13 +5,15 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export const useApplicationHook = () => {
-  const { user, login, logout } = useApplication();
+  const { user, login, logout, loadingApp, changeLoading } = useApplication();
 
   useEffect(() => {
     if (!user) {
       const checkUser = AuthStorage.isAuth();
       if (checkUser) {
         login(checkUser);
+      } else {
+        changeLoading(false);
       }
     } else {
       AuthStorage.authenticate(user);
@@ -35,5 +37,6 @@ export const useApplicationHook = () => {
     user,
     signin,
     logoutApp,
+    loadingApp,
   };
 };

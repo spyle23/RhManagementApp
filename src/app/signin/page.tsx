@@ -25,8 +25,8 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormInputs) => {
     try {
       setLoading(true);
-      const user = await signin(data.email, data.password);
-      router.push(user.role !== "Employee" ? "/dashboard" : "/my-leaves");
+      await signin(data.email, data.password);
+      router.push("/");
     } catch (err) {
       setError("Identifiants incorrects. Veuillez réessayer.");
     } finally {
