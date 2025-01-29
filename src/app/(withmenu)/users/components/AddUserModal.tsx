@@ -13,203 +13,27 @@ import {
   useFormContext,
   FormProvider,
 } from "react-hook-form";
+import { AdminForm } from "./AdminForm";
+import { EmployeeBasedForm } from "./EmployeeBasedForm";
 
 type AddUserModalProps = {
   onCreateUser: (val: UserRoles) => void;
   onClose: () => void;
-  user?: UserRoles;
+  user?: ICreateUser;
 };
 
-const BaseUserForm: FC<{ role: Role }> = ({ role }) => {
-  const {
-    register,
-    formState: { errors },
-  } = useFormContext<ICreateUser>();
-  switch (role) {
-    case "Admin":
-      return (
-        <div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Département
-            </label>
-            <input
-              type="text"
-              placeholder="Entrez le département"
-              className={`mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none ${
-                errors.depatment
-                  ? "border-red-600 focus:ring-red-500 focus:border-red-500"
-                  : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-              }`}
-              {...register("depatment", {
-                required: { value: true, message: "Département requis" },
-              })}
-            />
-            {errors.depatment && (
-              <p className="mt-1 text-sm text-red-600">
-                {errors.depatment.message}
-              </p>
-            )}
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Niveau d'accès
-            </label>
-            <input
-              type="text"
-              placeholder="Entrez le niveau d'accès"
-              className={`mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 ${
-                errors.accessLevel
-                  ? "border-red-600 focus:ring-red-500 focus:border-red-500"
-                  : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-              }`}
-              {...register("accessLevel", {
-                required: { value: true, message: "Niveau d'accès requis" },
-              })}
-            />
-            {errors.accessLevel && (
-              <p className="mt-1 text-sm text-red-600">
-                {errors.accessLevel.message}
-              </p>
-            )}
-          </div>
-        </div>
-      );
-    case "Manager":
-      return (
-        <div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Niveau de management
-            </label>
-            <input
-              type="text"
-              placeholder="Entrez le niveau de management"
-              className={`mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2  ${
-                errors.managementLevel
-                  ? "border-red-600 focus:ring-red-500 focus:border-red-500"
-                  : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-              }`}
-              {...register("managementLevel", {
-                required: {
-                  value: true,
-                  message: "Niveau de management requis",
-                },
-              })}
-            />
-            {errors.managementLevel && (
-              <p className="mt-1 text-sm text-red-600">
-                {errors.managementLevel.message}
-              </p>
-            )}
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Années d'expériences
-            </label>
-            <input
-              type="number"
-              placeholder="Entrez le nombre d'années d'expérience"
-              className={`mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2  ${
-                errors.yearsOfExperience
-                  ? "border-red-600 focus:ring-red-500 focus:border-red-500 "
-                  : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-              } `}
-              {...register("yearsOfExperience", {
-                required: {
-                  value: true,
-                  message: "années d'expériences requis",
-                },
-              })}
-            />
-            {errors.yearsOfExperience && (
-              <p className="mt-1 text-sm text-red-600">
-                {errors.yearsOfExperience.message}
-              </p>
-            )}
-          </div>
-        </div>
-      );
-    case "RH":
-      return (
-        <div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Spécialisation
-            </label>
-            <input
-              type="text"
-              placeholder="Entrez votre spécialisation"
-              className={`mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none ${
-                errors.specialisation
-                  ? "border-red-600 focus:ring-red-500 focus:border-red-500"
-                  : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-              }`}
-              {...register("specialisation", {
-                required: { value: true, message: "Spécialisation requise" },
-              })}
-            />
-            {errors.specialisation && (
-              <p className="mt-1 text-sm text-red-600">
-                {errors.specialisation.message}
-              </p>
-            )}
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Certification
-            </label>
-            <input
-              type="text"
-              placeholder="Entrez votre certification"
-              className={`mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 ${
-                errors.certification
-                  ? "border-red-600 focus:ring-red-500 focus:border-red-500"
-                  : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-              }`}
-              {...register("certification", {
-                required: { value: true, message: "Certification requise" },
-              })}
-            />
-            {errors.certification && (
-              <p className="mt-1 text-sm text-red-600">
-                {errors.certification.message}
-              </p>
-            )}
-          </div>
-        </div>
-      );
-    default:
-      return (
-        <div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Recruté le
-            </label>
-            <input
-              type="date"
-              placeholder="Sélectionnez la date de recrutement"
-              className={`mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 ${
-                errors.dateOfHiring
-                  ? "border-red-600 focus:ring-red-500 focus:border-red-500"
-                  : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-              }`}
-              {...register("dateOfHiring", {
-                required: {
-                  value: true,
-                  message: "La date de recrutement est requise",
-                },
-              })}
-            />
-            {errors.dateOfHiring && (
-              <p className="mt-1 text-sm text-red-600">
-                {errors.dateOfHiring.message}
-              </p>
-            )}
-          </div>
-        </div>
-      );
-  }
+export const BaseUserForm: FC<{
+  role: "Admin" | "Autres";
+  currUser?: ICreateUser;
+}> = ({ role, currUser }) => {
+  return role === "Admin" ? (
+    <AdminForm />
+  ) : (
+    <EmployeeBasedForm
+      roles={["Manager", "RH", "Employee"]}
+      currUser={currUser}
+    />
+  );
 };
 
 export const AddUserModal: FC<AddUserModalProps> = ({
@@ -232,12 +56,22 @@ export const AddUserModal: FC<AddUserModalProps> = ({
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>();
+  const [selectedTab, setSelectedTab] = useState<"Admin" | "Autres">("Autres");
 
   useEffect(() => {
     if (currUser) {
-      reset(currUser);
+      console.log("curr user role", currUser.role);
+      reset({
+        ...currUser,
+        role: currUser.role,
+        dateOfHiring: currUser.dateOfHiring
+          ? currUser.dateOfHiring.split("T")[0]
+          : undefined,
+      });
     }
   }, [currUser]);
+
+  console.log("role", watch().dateOfHiring);
 
   const handleUploadFile = (file: File[]) => {
     setValue("file", file[0]);
@@ -258,9 +92,11 @@ export const AddUserModal: FC<AddUserModalProps> = ({
         const formData = new FormData();
         const createUser = new CreateUser(user.token);
         const updateUser = new UpdateUser(user.token);
-        Object.keys(val).forEach((k) => formData.append(k, val[k]));
+        Object.keys(val).forEach((k) =>
+          val[k] ? formData.append(k, val[k]) : undefined
+        );
         const createdUser = currUser
-          ? await updateUser.execute({ data: formData, id: currUser.id })
+          ? await updateUser.execute({ data: formData, id: currUser.id! })
           : await createUser.execute(formData);
         onCreateUser(
           currUser ? { ...createdUser, role: currUser.role } : createdUser
@@ -279,9 +115,18 @@ export const AddUserModal: FC<AddUserModalProps> = ({
     : watch().picture
     ? process.env.NEXT_PUBLIC_IMAGE_URI + watch().picture
     : null;
+
+  useEffect(() => {
+    if (!currUser) {
+      setValue("role", selectedTab === "Admin" ? "Admin" : ("" as Role));
+    }
+  }, [selectedTab, currUser]);
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div style={{ maxHeight: 650 }} className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 overflow-y-scroll">
+      <div
+        style={{ maxHeight: 650 }}
+        className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 overflow-y-scroll"
+      >
         <h2 className="text-xl font-semibold mb-4">
           {currUser
             ? `Informations de ${currUser.firstName} ${currUser.lastName}`
@@ -403,39 +248,6 @@ export const AddUserModal: FC<AddUserModalProps> = ({
               )}
             </div>
           )}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Rôle
-            </label>
-            <Controller
-              name="role"
-              control={control}
-              rules={{
-                required: { value: true, message: "le rôle est requis" },
-              }}
-              render={({ field }) => (
-                <select
-                  {...field}
-                  disabled={Boolean(currUser)}
-                  className={`mt-1 block px-4 py-2 w-full border rounded-md shadow-sm focus:outline-none focus:ring-2 ${
-                    errors.role
-                      ? "border-red-600 focus:ring-red-500 focus:border-red-500"
-                      : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                  }`}
-                >
-                  <option value="">Choisir le rôle</option>
-                  {roles.map((role) => (
-                    <option key={role} value={role}>
-                      {role}
-                    </option>
-                  ))}
-                </select>
-              )}
-            />
-            {errors.role && (
-              <p className="mt-1 text-sm text-red-600">{errors.role.message}</p>
-            )}
-          </div>
           <div className="mb-4 w-full">
             {defaultImageUrl ? (
               <div className="flex justify-center w-full relative">
@@ -449,11 +261,33 @@ export const AddUserModal: FC<AddUserModalProps> = ({
               <Dropzone onFinished={handleUploadFile} type="image/*" />
             )}
           </div>
-          {watch().role && !currUser && (
-            <FormProvider {...methods}>
-              <BaseUserForm role={watch().role} />
-            </FormProvider>
-          )}
+          <div className="flex mb-4 border-b w-full justify-between">
+            <button
+              type="button"
+              onClick={() => !currUser && setSelectedTab("Admin")}
+              className={`px-4 py-2 ${
+                selectedTab === "Admin"
+                  ? "border-b-2 border-blue-500 text-blue-600"
+                  : "text-gray-500"
+              } ${currUser ? "cursor-not-allowed opacity-50" : ""}`}
+            >
+              Admin
+            </button>
+            <button
+              type="button"
+              onClick={() => !currUser && setSelectedTab("Autres")}
+              className={`px-4 py-2 ${
+                selectedTab === "Autres"
+                  ? "border-b-2 border-blue-500 text-blue-600"
+                  : "text-gray-500"
+              } ${currUser ? "cursor-not-allowed opacity-50" : ""}`}
+            >
+              Autres
+            </button>
+          </div>
+          <FormProvider {...methods}>
+            <BaseUserForm role={selectedTab} currUser={currUser} />
+          </FormProvider>
 
           {error && (
             <div className="rounded-md bg-red-50 p-4 mb-4">

@@ -10,10 +10,13 @@ import { BaseAction, UserFilters } from "@/types/query";
 import { UserHandler } from "@/utils/UserHandler";
 import { useGenericFilters } from "@/hook/useGenericFilters";
 import GetUsersByFilters from "@/api/auth/GetUsersByFilters";
-import { UserRoles } from "@/types/user";
+import { ICreateUser, UserRoles } from "@/types/user";
 import { BasePagination } from "@/components/pagination/BasePagination";
 import { AddUserModal } from "./components/AddUserModal";
 import { roles } from "@/constants/roles";
+import { DeleteModal } from "./components/DeleteModal";
+import GetUserFormsById from "@/api/auth/GetUserFormsById";
+import { useApplication } from "@/store/useApplication";
 
 const getRoleClass = (role: string) => {
   switch (role) {
@@ -49,18 +52,29 @@ const reducerFilters = (state: UserFilters, action: BaseAction) =>
 const initialState: UserFilters = {
   pageNumber: 1,
   pageSize: 10,
+  searchTerm: ''
 };
 
 export default function UsersPage() {
-  const { data, loading, dispatchFilters, stateFilters, addItem, updateItem } =
-    useGenericFilters<UserFilters, UserRoles, GetUsersByFilters>(
-      reducerFilters,
-      initialState,
-      GetUsersByFilters
-    );
+  const {
+    data,
+    loading,
+    dispatchFilters,
+    stateFilters,
+    addItem,
+    updateItem,
+    deleteItem,
+  } = useGenericFilters<UserFilters, UserRoles, GetUsersByFilters>(
+    reducerFilters,
+    initialState,
+    GetUsersByFilters
+  );
 
   const [showModal, setShowModal] = useState(false);
-  const [currUser, setCurrUser] = useState<UserRoles>();
+  const [currUser, setCurrUser] = useState<ICreateUser>();
+  const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
+
+  const { user } = useApplication();
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     dispatchFilters({ type: "searchUser", value: e.target.value });
@@ -70,15 +84,31 @@ export default function UsersPage() {
     dispatchFilters({ type: "filterRole", value: e.target.value });
   };
 
-  const showUpdate = (user: UserRoles) => {
+  const showUpdate = async (userId: number) => {
+    if (user) {
+      const getUserForms = new GetUserFormsById(user.token);
+      const userForms = await getUserForms.execute(userId);
+      setCurrUser(userForms);
+      setShowModal(true);
+    }
+  };
+
+  const showDelete = (user: UserRoles) => {
     setCurrUser(user);
-    setShowModal(true);
+    setOpenDeleteModal(true);
   };
 
   const handleClose = () => {
     setShowModal(false);
     setCurrUser(undefined);
   };
+
+  const closeDeleteModal = () => {
+    setOpenDeleteModal(false);
+    setCurrUser(undefined);
+  };
+
+  const handleDeleteUser = (id: number) => {};
 
   return (
     <div>
@@ -193,13 +223,13 @@ export default function UsersPage() {
                       {user.role !== "Admin" && (
                         <div className="flex items-center space-x-2">
                           <button
-                            onClick={() => showUpdate(user)}
+                            onClick={() => showUpdate(user.id)}
                             className="p-1 rounded-full hover:bg-gray-100 text-blue-600"
                           >
                             <PencilSquareIcon className="h-5 w-5" />
                           </button>
                           <button
-                            // onClick={}
+                            onClick={() => showDelete(user)}
                             className="p-1 rounded-full hover:bg-gray-100 text-red-600"
                           >
                             <TrashIcon className="h-5 w-5" />
@@ -231,6 +261,14 @@ export default function UsersPage() {
           onClose={handleClose}
           onCreateUser={currUser ? updateItem : addItem}
           user={currUser}
+        />
+      )}
+
+      {openDeleteModal && currUser && (
+        <DeleteModal
+          onClose={closeDeleteModal}
+          onDelete={deleteItem}
+          user={currUser as UserRoles}
         />
       )}
     </div>

@@ -55,6 +55,13 @@ export const useGenericFilters = <
     }));
   };
 
+  const deleteItem = (val: TResult) => {
+    setData((curr) => ({
+      ...curr,
+      datas: curr.datas.filter((a) => a.id !== val.id),
+    }));
+  };
+
   return {
     data,
     loading,
@@ -62,6 +69,7 @@ export const useGenericFilters = <
     dispatchFilters,
     stateFilters,
     addItem,
-    updateItem
+    updateItem,
+    deleteItem
   };
 };
