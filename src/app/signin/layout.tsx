@@ -5,11 +5,11 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function SigninLayout({ children }: any) {
-  const { user, loadingApp } = useApplicationHook();
+  const { user, loadingApp, afterLogin } = useApplicationHook();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loadingApp && user) {
+    if (!loadingApp && user && !afterLogin) {
       router.back();
     }
   }, [user, loadingApp]);

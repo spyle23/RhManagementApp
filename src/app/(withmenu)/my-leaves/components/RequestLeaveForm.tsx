@@ -1,32 +1,97 @@
 "use client";
 
-import { CalendarIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import GetAdminList from "@/api/auth/GetAdminList";
+import { useApplication } from "@/store/useApplication";
+import { LeaveForm, LeaveResult, LeaveType } from "@/types/leave";
+import { UserHeader } from "@/types/user";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import { FC, useEffect, useMemo, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 
-type LeaveType = "Congé payé" | "Maladie" | "RTT" | "Autre";
+type RequestLeaveFormProps = {
+  currLeave?: LeaveResult;
+  onClose: () => void;
+  onSubmit: (data: LeaveForm) => Promise<void>;
+};
+export const RequestLeaveForm: FC<RequestLeaveFormProps> = ({
+  onClose,
+  currLeave,
+  onSubmit,
+}) => {
+  const leavesTypes: LeaveType[] = [LeaveType.holiday, LeaveType.permission];
+  const {
+    register,
+    formState: { errors },
+    control,
+    handleSubmit,
+    watch,
+    reset,
+  } = useForm<LeaveForm>();
 
-export default function RequestLeaveForm({ onClose }: { onClose: () => void }) {
-  const [formData, setFormData] = useState({
-    type: "Congé payé" as LeaveType,
-    startDate: "",
-    endDate: "",
-    reason: "",
-    halfDay: false,
-  });
+  const { user } = useApplication();
+  const [admins, setAdmins] = useState<UserHeader[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle form submission
-    console.log(formData);
-    onClose();
+  useEffect(() => {
+    const getAdmin = async () => {
+      if (!currLeave && user?.token) {
+        const getAdminList = new GetAdminList(user.token);
+        const vals = await getAdminList.execute();
+        setAdmins(vals);
+      }
+    };
+
+    const setDefaultValue = () => {
+      if (currLeave) {
+        const [startDay, startMonth, startYear] = new Date(currLeave.startDate)
+          .toLocaleDateString(["fr"], { dateStyle: "short" })
+          .split("/");
+        const [endDay, endMonth, endYear] = new Date(currLeave.endDate)
+          .toLocaleDateString(["fr"], { dateStyle: "short" })
+          .split("/");
+
+        reset({
+          ...currLeave,
+          startDate: `${startYear}-${startMonth}-${startDay}`,
+          endDate: `${endYear}-${endMonth}-${endDay}`,
+        });
+      }
+    };
+
+    getAdmin();
+    setDefaultValue();
+  }, [currLeave, user]);
+
+  console.log("forms", watch());
+
+  const onValid = async (value: LeaveForm) => {
+    try {
+      setLoading(true);
+      await onSubmit(value);
+    } catch (error) {
+    } finally {
+      setLoading(false);
+      onClose();
+    }
   };
+
+  const startGtEnd = useMemo(() => {
+    const endDateString = watch().endDate;
+    const startDateString = watch().startDate;
+    if (endDateString && startDateString) {
+      return new Date(startDateString) > new Date(endDateString);
+    }
+    return false;
+  }, [watch().startDate, watch().endDate]);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
-        <div className="flex justify-between items-center p-6 border-b">
-          <h2 className="text-xl font-semibold">Nouvelle Demande de Congé</h2>
-          <button 
+      <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+        <div className="flex justify-between items-center border-b pb-4">
+          <h2 className="text-xl font-semibold">
+            {currLeave ? "Modification de la" : "Nouvelle"} Demande de Congé
+          </h2>
+          <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-500"
           >
@@ -34,21 +99,37 @@ export default function RequestLeaveForm({ onClose }: { onClose: () => void }) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit(onValid)} className="space-y-4 mt-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Type de congé
             </label>
-            <select
-              value={formData.type}
-              onChange={(e) => setFormData({ ...formData, type: e.target.value as LeaveType })}
-              className="w-full rounded-md border-gray-300 shadow-sm"
-            >
-              <option value="Congé payé">Congé payé</option>
-              <option value="Maladie">Maladie</option>
-              <option value="RTT">RTT</option>
-              <option value="Autre">Autre</option>
-            </select>
+            <Controller
+              name="type"
+              control={control}
+              rules={{
+                required: {
+                  value: true,
+                  message: "Le type de congé est requis",
+                },
+              }}
+              render={({ field }) => (
+                <select
+                  {...field}
+                  className="w-full rounded-md border-2 border-gray-400 shadow-sm focus:ring-blue-500 focus:border-blue-500 py-2 px-1"
+                >
+                  <option value="">Choisir le type de congé</option>
+                  {leavesTypes.map((a, i) => (
+                    <option key={i} value={a}>
+                      {a}
+                    </option>
+                  ))}
+                </select>
+              )}
+            />
+            {errors.type && (
+              <p className="mt-1 text-sm text-red-600">{errors.type.message}</p>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -56,58 +137,107 @@ export default function RequestLeaveForm({ onClose }: { onClose: () => void }) {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Date de début
               </label>
-              <div className="relative">
-                <input
-                  type="date"
-                  value={formData.startDate}
-                  onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                  className="w-full rounded-md border-gray-300 shadow-sm"
-                />
-                <CalendarIcon className="absolute right-2 top-2 h-5 w-5 text-gray-400" />
-              </div>
+              <input
+                type="date"
+                {...register("startDate", {
+                  required: {
+                    value: true,
+                    message: "Veuillez renseigner la date de départ",
+                  },
+                })}
+                className="w-full rounded-md border-2 border-gray-400 shadow-sm focus:ring-blue-500 focus:border-blue-500 py-2 px-1"
+              />
+              {errors.startDate && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.startDate.message}
+                </p>
+              )}
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Date de fin
               </label>
-              <div className="relative">
-                <input
-                  type="date"
-                  value={formData.endDate}
-                  onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                  className="w-full rounded-md border-gray-300 shadow-sm"
-                />
-                <CalendarIcon className="absolute right-2 top-2 h-5 w-5 text-gray-400" />
-              </div>
+              <input
+                type="date"
+                {...register("endDate", {
+                  required: {
+                    value: true,
+                    message: "Veuillez rensegner la date de retour",
+                  },
+                })}
+                className="w-full rounded-md border-2 border-gray-400 shadow-sm focus:ring-blue-500 focus:border-blue-500 py-2 px-1"
+              />
+              {errors.endDate && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.endDate.message}
+                </p>
+              )}
             </div>
           </div>
+          {startGtEnd && (
+            <p className="mt-1 text-sm text-red-600">
+              La date de départ ne peut pas être supérieure au date de retour
+            </p>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Motif
             </label>
             <textarea
-              value={formData.reason}
-              onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
+              {...register("reason", {
+                required: {
+                  value: true,
+                  message: "Veuillez préciser le motif",
+                },
+              })}
               rows={3}
-              className="w-full rounded-md border-gray-300 shadow-sm"
+              className="w-full rounded-md border-2 border-gray-400 shadow-sm focus:ring-blue-500 focus:border-blue-500 py-2 px-1"
               placeholder="Précisez le motif de votre demande..."
             />
+            {errors.reason && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.reason.message}
+              </p>
+            )}
           </div>
 
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="halfDay"
-              checked={formData.halfDay}
-              onChange={(e) => setFormData({ ...formData, halfDay: e.target.checked })}
-              className="rounded border-gray-300 text-blue-600"
-            />
-            <label htmlFor="halfDay" className="ml-2 text-sm text-gray-600">
-              Demi-journée
-            </label>
-          </div>
+          {!currLeave && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                le responsable
+              </label>
+              <Controller
+                name="adminId"
+                control={control}
+                rules={{
+                  required: {
+                    value: true,
+                    message: "Le responsable est requis",
+                  },
+                }}
+                render={({ field }) => (
+                  <select
+                    {...field}
+                    className="w-full rounded-md border-2 border-gray-400 shadow-sm focus:ring-blue-500 focus:border-blue-500 py-2 px-1"
+                  >
+                    <option value="">Choisir le responsable</option>
+                    {admins.map((a, i) => (
+                      <option key={i} value={a.id}>
+                        {a.firstName} {a.lastName}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              />
+              {errors.adminId && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.adminId.message}
+                </p>
+              )}
+            </div>
+          )}
 
           <div className="flex justify-end space-x-3 pt-4">
             <button
@@ -119,13 +249,22 @@ export default function RequestLeaveForm({ onClose }: { onClose: () => void }) {
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium"
+              disabled={loading || startGtEnd}
+              className={`px-4 py-2 ${
+                loading || startGtEnd
+                  ? "bg-gray-200 text-black"
+                  : "bg-blue-600 text-white hover:bg-blue-700"
+              }  rounded-md `}
             >
-              Soumettre la demande
+              {loading
+                ? "chargement..."
+                : currLeave
+                ? "Valider la modification"
+                : "Soumettre la demande"}
             </button>
           </div>
         </form>
       </div>
     </div>
   );
-}
+};

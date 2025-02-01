@@ -60,18 +60,21 @@ export const AddUserModal: FC<AddUserModalProps> = ({
 
   useEffect(() => {
     if (currUser) {
-      console.log("curr user role", currUser.role);
+      const val = currUser.dateOfHiring
+        ? new Date(currUser.dateOfHiring)
+            .toLocaleDateString(["fr"], {
+              dateStyle: "short",
+            })
+            .split("/")
+        : ([] as string[]);
       reset({
         ...currUser,
         role: currUser.role,
-        dateOfHiring: currUser.dateOfHiring
-          ? currUser.dateOfHiring.split("T")[0]
-          : undefined,
+        dateOfHiring:
+          val.length > 0 ? `${val[2]}-${val[1]}-${val[0]}` : undefined,
       });
     }
   }, [currUser]);
-
-  console.log("role", watch().dateOfHiring);
 
   const handleUploadFile = (file: File[]) => {
     setValue("file", file[0]);

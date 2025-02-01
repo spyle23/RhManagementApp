@@ -4,6 +4,7 @@ import { create } from "zustand";
 type IApplication = {
   user: User | null;
   loadingApp: boolean;
+  afterLogin:boolean;
   logout: () => void;
   login: (user: User) => void;
   changeLoading: (val: boolean) => void;
@@ -12,10 +13,12 @@ type IApplication = {
 export const useApplication = create<IApplication>()((set) => ({
   user: null,
   loadingApp: true,
+  afterLogin: false,
   login: (val) =>
     set((state) => ({
       ...state,
       user: val,
+      afterLogin: true,
       loadingApp: false,
     })),
   changeLoading: (val: boolean) =>

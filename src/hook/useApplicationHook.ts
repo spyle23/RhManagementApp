@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export const useApplicationHook = () => {
-  const { user, login, logout, loadingApp, changeLoading } = useApplication();
+  const { user, login, logout, loadingApp, changeLoading, afterLogin } = useApplication();
 
   useEffect(() => {
     if (!user) {
@@ -38,5 +38,6 @@ export const useApplicationHook = () => {
     signin,
     logoutApp,
     loadingApp,
+    afterLogin
   };
 };
