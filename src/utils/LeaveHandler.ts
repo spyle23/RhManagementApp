@@ -5,4 +5,5 @@ export const LeaveHandler: IPagination<LeaveFilters> = {
   ...BaseHandler<LeaveFilters>(),
   filterType: (state, action) => ({ ...state, type: action.value }),
   filterStatus: (state, action) => ({ ...state, status: action.value }),
+  search: (state, action) => ({ ...state, searchTerm: action.value }),
 };

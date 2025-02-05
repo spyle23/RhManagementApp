@@ -1,6 +1,7 @@
 import { LeaveForm, LeaveResult, SoldLeave } from "@/types/leave";
 import UseCase from "../interfaces/UseCase";
 import SecureUseCase from "../SecureUseCase";
+import { fetchWithAuth } from "@/utils/fetchWithAuth";
 
 export default class CreateLeave
   extends SecureUseCase
@@ -9,7 +10,7 @@ export default class CreateLeave
   async execute(data: LeaveForm): Promise<LeaveResult> {
     const url = new URL(`Leave`, process.env.NEXT_PUBLIC_BACKEND_URL);
 
-    const response = await fetch(url, {
+    const response = await fetchWithAuth(url, {
       method: "post",
       headers: {
         "Content-Type": "application/json",

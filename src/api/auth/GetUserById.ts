@@ -1,6 +1,7 @@
 import { UserHeader } from "@/types/user";
 import UseCase from "../interfaces/UseCase";
 import SecureUseCase from "../SecureUseCase";
+import { fetchWithAuth } from "@/utils/fetchWithAuth";
 
 export default class GetUserById
   extends SecureUseCase
@@ -9,7 +10,7 @@ export default class GetUserById
   async execute(userId: number): Promise<UserHeader> {
     const url = new URL(`User/${userId}`, process.env.NEXT_PUBLIC_BACKEND_URL);
 
-    const response = await fetch(url, {
+    const response = await fetchWithAuth(url, {
       method: "get",
       headers: {
         "Content-Type": "application/json",

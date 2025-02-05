@@ -1,6 +1,7 @@
 import { ICreateUser, UserHeader, UserRoles } from "@/types/user";
 import UseCase from "../interfaces/UseCase";
 import SecureUseCase from "../SecureUseCase";
+import { fetchWithAuth } from "@/utils/fetchWithAuth";
 
 export default class CreateUser
   extends SecureUseCase
@@ -9,7 +10,7 @@ export default class CreateUser
   async execute(data: FormData): Promise<UserRoles> {
     const url = new URL(`User`, process.env.NEXT_PUBLIC_BACKEND_URL);
 
-    const response = await fetch(url, {
+    const response = await fetchWithAuth(url, {
       method: "post",
       body: data,
       headers: {

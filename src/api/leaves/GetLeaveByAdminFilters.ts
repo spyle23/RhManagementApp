@@ -5,14 +5,14 @@ import { BasePagination } from "@/types/BasePagination";
 import { LeaveResult } from "@/types/leave";
 import { fetchWithAuth } from "@/utils/fetchWithAuth";
 
-export default class GetLeaveByFilters
+export default class GetLeaveByAdminFilters
   extends SecureUseCase
   implements UseCase<LeaveFilters, Promise<BasePagination<LeaveResult>>>
 {
   async execute(
     userFilters: LeaveFilters
   ): Promise<BasePagination<LeaveResult>> {
-    const url = new URL(`Leave/my-leaves`, process.env.NEXT_PUBLIC_BACKEND_URL);
+    const url = new URL(`Leave/Admin`, process.env.NEXT_PUBLIC_BACKEND_URL);
 
     url.searchParams.append("pageNumber", userFilters.pageNumber.toString());
     url.searchParams.append("pageSize", userFilters.pageSize.toString());
@@ -39,4 +39,4 @@ export default class GetLeaveByFilters
 
     return await response.json();
   }
-}
+} 

@@ -1,6 +1,7 @@
 import { LeaveForm, LeaveResult, SoldLeave } from "@/types/leave";
 import UseCase from "../interfaces/UseCase";
 import SecureUseCase from "../SecureUseCase";
+import { fetchWithAuth } from "@/utils/fetchWithAuth";
 
 export default class DeleteLeave
   extends SecureUseCase
@@ -9,7 +10,7 @@ export default class DeleteLeave
   async execute(id: number): Promise<{ message: string }> {
     const url = new URL(`Leave/${id}`, process.env.NEXT_PUBLIC_BACKEND_URL);
 
-    const response = await fetch(url, {
+    const response = await fetchWithAuth(url, {
       method: "delete",
       headers: {
         "Content-Type": "application/json",

@@ -1,6 +1,7 @@
 import { UserRoles } from "@/types/user";
 import UseCase from "../interfaces/UseCase";
 import SecureUseCase from "../SecureUseCase";
+import { fetchWithAuth } from "@/utils/fetchWithAuth";
 
 type IUpdateUser = {
   data: FormData;
@@ -17,7 +18,7 @@ export default class UpdateUser
       process.env.NEXT_PUBLIC_BACKEND_URL
     );
 
-    const response = await fetch(url, {
+    const response = await fetchWithAuth(url, {
       method: "put",
       body: data,
       headers: {

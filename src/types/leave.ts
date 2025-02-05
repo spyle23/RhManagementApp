@@ -28,10 +28,20 @@ export type LeaveResult = {
 
 export type LeaveForm = {
   id?: number | null;
-  startDate?: string  | null;
+  startDate?: string | null;
   endDate?: string | null;
-  type:LeaveType;
+  type: LeaveType;
   reason?: string;
-  adminId?: number
-  employeeId: number
-}
+  adminId?: number;
+  employeeId: number;
+};
+
+export type IActionLeave = {
+  id: number;
+  status: LeaveStatus;
+};
+
+export type LeaveDetails = LeaveResult & {
+  holidayBalance: number;
+  balancePermission: number;
+};

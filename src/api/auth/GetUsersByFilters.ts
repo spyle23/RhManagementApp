@@ -3,6 +3,7 @@ import UseCase from "../interfaces/UseCase";
 import SecureUseCase from "../SecureUseCase";
 import { UserFilters } from "@/types/query";
 import { BasePagination } from "@/types/BasePagination";
+import { fetchWithAuth } from "@/utils/fetchWithAuth";
 
 export default class GetUsersByFilters
   extends SecureUseCase
@@ -21,7 +22,7 @@ export default class GetUsersByFilters
       url.searchParams.append("searchTerm", userFilters.searchTerm);
     }
 
-    const response = await fetch(url, {
+    const response = await fetchWithAuth(url, {
       method: "get",
       headers: {
         "Content-Type": "application/json",

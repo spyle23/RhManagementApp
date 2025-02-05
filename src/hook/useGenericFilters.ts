@@ -70,6 +70,7 @@ export const useGenericFilters = <
     stateFilters,
     addItem,
     updateItem,
-    deleteItem
+    deleteItem,
+    setData
   };
 };
