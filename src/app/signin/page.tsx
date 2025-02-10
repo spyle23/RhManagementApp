@@ -39,7 +39,7 @@ export default function LoginPage() {
       <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 space-y-8">
         <div className="text-center">
           <Image
-            src="/logo.svg"
+            src="/images/MC.png"
             alt="Logo"
             width={64}
             height={64}

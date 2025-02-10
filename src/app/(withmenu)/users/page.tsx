@@ -17,6 +17,7 @@ import { roles } from "@/constants/roles";
 import { DeleteModal } from "./components/DeleteModal";
 import GetUserFormsById from "@/api/auth/GetUserFormsById";
 import { useApplication } from "@/store/useApplication";
+import { UsersSkeleton } from "@/components/Skeleton/UsersSkeleton";
 
 const getRoleClass = (role: string) => {
   switch (role) {
@@ -154,9 +155,7 @@ export default function UsersPage() {
       </div>
 
       {/* Loading Skeleton */}
-      {loading ? (
-        <div className="mt-5">Loading...</div> // Replace with a skeleton component if available
-      ) : (
+      {loading ? <UsersSkeleton /> : (
         <div className="mt-5 bg-white shadow-sm rounded-lg">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">

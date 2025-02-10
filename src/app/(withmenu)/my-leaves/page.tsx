@@ -23,6 +23,7 @@ import { calculDuration } from "@/utils/duration";
 import CreateLeave from "@/api/leaves/CreateLeave";
 import { DeleteLeaveModal } from "./components/DeleteLeaveModal";
 import { BasePagination } from "@/components/pagination/BasePagination";
+import { LeavesSkeleton } from "@/components/Skeleton/LeavesSkeleton";
 
 export default function MyLeavesPage() {
   const [sold, setSold] = useState<SoldLeave>({
@@ -232,10 +233,9 @@ export default function MyLeavesPage() {
         </button> */}
         </div>
 
-        
         {/* Leaves List */}
         {loading ? (
-          <div className="mt-5">Loading...</div>
+          <LeavesSkeleton />
         ) : (
           <div className="bg-white shadow-sm rounded-lg">
             <div className="overflow-x-auto">

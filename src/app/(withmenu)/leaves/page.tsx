@@ -27,6 +27,7 @@ import { ValidateLeaveModal } from "./components/ValidateLeaveModal";
 import ValidateAdminLeave from "@/api/leaves/ValidateAdminLeave";
 import GetDetailsLeave from "@/api/leaves/GetDetailsLeave";
 import { ViewLeaveModal } from "./components/ViewLeaveModal";
+import { LeavesSkeleton } from "@/components/Skeleton/LeavesSkeleton";
 
 type IActionModal = {
   value: boolean;
@@ -179,9 +180,7 @@ export default function LeavesPage() {
         </div>
 
         {/* Leaves List */}
-        {loading ? (
-          <div className="mt-5">Loading...</div>
-        ) : (
+        {loading ? <LeavesSkeleton /> : (
           <div className="bg-white shadow-sm rounded-lg">
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">

@@ -15,6 +15,10 @@ export type LeaveFilters = {
   status?: string;
 } & BaseFilters;
 
+export type EmployeeRecordFilters = {
+  status?: string;
+} & BaseFilters;
+
 export type BaseAction<TValue = any> = {
   type: string;
   value: TValue;

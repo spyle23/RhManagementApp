@@ -23,7 +23,7 @@ export const navigation = {
   Manager: [
     { name: "Dashboard", href: "/dashboard", icon: ChartBarIcon },
     { name: "Équipe", href: "/team", icon: UsersIcon },
-    { name: "Employés", href: "/employees", icon: UsersIcon },
+    { name: "Collaborateurs", href: "/employees", icon: UsersIcon },
     { name: "Liste des équipes", href: "/teams", icon: UserGroupIcon },
     { name: "Mes Congés", href: "/my-leaves", icon: CalendarIcon },
     { name: "Paramètres", href: "/settings", icon: Cog6ToothIcon },
@@ -31,7 +31,7 @@ export const navigation = {
   Employee: [
     { name: "Mes Congés", href: "/my-leaves", icon: CalendarIcon },
     { name: "Équipe", href: "/team", icon: UsersIcon },
-    { name: "Employés", href: "/employees", icon: UsersIcon },
+    { name: "Collaborateurs", href: "/employees", icon: UsersIcon },
     { name: "Paramètres", href: "/settings", icon: Cog6ToothIcon },
   ],
 };
