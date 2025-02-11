@@ -11,6 +11,7 @@ export const navigation = {
     { name: "Dashboard", href: "/dashboard", icon: ChartBarIcon },
     { name: "Employés", href: "/employees", icon: UsersIcon },
     { name: "Mes Congés", href: "/my-leaves", icon: CalendarIcon },
+    { name: "Liste des congés", href: "/leaves", icon: CalendarIcon },
     { name: "Paramètres", href: "/settings", icon: Cog6ToothIcon },
   ],
   Admin: [

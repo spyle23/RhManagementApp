@@ -1,13 +1,13 @@
 import { fetchWithAuth } from "@/utils/fetchWithAuth";
 import UseCase from "../interfaces/UseCase";
 import SecureUseCase from "../SecureUseCase";
-import { Team } from "@/types/team";
+import { TeamWithManagerDetails } from "@/types/team";
 
 export default class GetMyTeam
   extends SecureUseCase
-  implements UseCase<void, Promise<Team>>
+  implements UseCase<void, Promise<TeamWithManagerDetails>>
 {
-  async execute(): Promise<Team> {
+  async execute(): Promise<TeamWithManagerDetails> {
     const url = new URL("Team/my-team", process.env.NEXT_PUBLIC_BACKEND_URL);
 
     const response = await fetchWithAuth(url, {
