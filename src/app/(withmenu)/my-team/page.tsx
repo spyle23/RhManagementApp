@@ -2,7 +2,7 @@
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Role } from "@/types/user";
-import { UsersIcon } from "@heroicons/react/24/outline";
+import { UsersIcon, UserGroupIcon, BriefcaseIcon, HomeIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 // import { Users, BarChart } from "lucide-react";
 
@@ -15,8 +15,24 @@ type TeamMember = {
   currentTask: string;
 };
 
+type Team = {
+  id: string;
+  name: string;
+  speciality: string;
+  membersCount: number;
+  manager: string;
+};
+
 export default function TeamPage() {
   const [role] = useState<Role>("Manager");
+  const [team] = useState<Team>({
+    id: "1",
+    name: "Frontend Team",
+    speciality: "React, NextJS, TypeScript",
+    membersCount: 8,
+    manager: "Sophie Dubois"
+  });
+
   const [teamMembers] = useState<TeamMember[]>([
     {
       id: "1",
@@ -44,13 +60,41 @@ export default function TeamPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-lg shadow-sm">
           <div className="flex items-center">
+            <HomeIcon className="h-8 w-8 text-blue-600" />
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-500">Nom de l'équipe</p>
+              <p className="text-2xl font-semibold">{team.name}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg shadow-sm">
+          <div className="flex items-center">
+            <BriefcaseIcon className="h-8 w-8 text-blue-600" />
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-500">Spécialité</p>
+              <p className="text-2xl font-semibold">{team.speciality}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg shadow-sm">
+          <div className="flex items-center">
             <UsersIcon className="h-8 w-8 text-blue-600" />
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500">
-                Membres d'équipe
-              </p>
-              <p className="text-2xl font-semibold">{teamMembers.length}</p>
+              <p className="text-sm font-medium text-gray-500">Membres d'équipe</p>
+              <p className="text-2xl font-semibold">{team.membersCount}</p>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Team Details */}
+      <div className="bg-white p-6 rounded-lg shadow-sm">
+        <div className="space-y-4">
+          <div className="text-sm text-gray-500">
+            <p className="font-medium text-gray-700">Manager d'équipe</p>
+            <p>{team.manager}</p>
           </div>
         </div>
       </div>

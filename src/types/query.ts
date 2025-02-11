@@ -32,3 +32,7 @@ export type IPagination<TState> = {
   changeListPerPage: (state: TState, action: BaseAction<number>) => TState;
   [key: string]: (state: TState, action: BaseAction<any>) => TState;
 };
+
+export type TeamFilters = {
+  searchTerm?: string;
+} & BaseFilters;
