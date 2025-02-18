@@ -36,3 +36,5 @@ export type IPagination<TState> = {
 export type TeamFilters = {
   searchTerm?: string;
 } & BaseFilters;
+
+export type PayslipFilters = BaseFilters;
