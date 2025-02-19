@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   UsersIcon,
   BriefcaseIcon,
@@ -9,6 +9,8 @@ import {
 } from "@heroicons/react/24/outline";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Role } from "@/types/user";
+import { useApplication } from "@/store/useApplication";
+import GetStats from "@/api/stats/GetStats";
 
 // Types pour les statistiques
 type StatCard = {
@@ -30,40 +32,35 @@ type Activity = {
 };
 
 export default function DashboardPage() {
-  const [stats] = useState<StatCard[]>([
-    {
-      id: "1",
-      name: "Employés Total",
-      value: "245",
-      icon: UsersIcon,
-      change: "+4.75%",
-      trend: "up",
-    },
-    {
-      id: "2",
-      name: "Postes Ouverts",
-      value: "12",
-      icon: BriefcaseIcon,
-      change: "+2.1%",
-      trend: "up",
-    },
-    {
-      id: "3",
-      name: "Congés en Attente",
-      value: "8",
-      icon: CalendarIcon,
-      change: "-1.5%",
-      trend: "down",
-    },
-    {
-      id: "4",
-      name: "Budget RH",
-      value: "€125K",
-      icon: BanknotesIcon,
-      change: "+12.5%",
-      trend: "up",
-    },
-  ]);
+  const { user } = useApplication();
+  const [stats, setStats] = useState<StatCard[]>([]);
+  useEffect(() => {
+    const getStats = async () => {
+      if (user) {
+        const getStatistic = new GetStats(user.token);
+        const stats = await getStatistic.execute();
+        setStats([
+          {
+            id: "1",
+            name: "Employés Total",
+            value: stats.currentMonthEmployeeCount.toString(),
+            icon: UsersIcon,
+            change: `${stats.employeeGrowthRate} %`,
+            trend: stats.employeeGrowthRate >= 0 ? "up" : "down",
+          },
+          {
+            id: "2",
+            name: "Congés en Attente",
+            value: `${stats.currentPendingLeavesCount}`,
+            icon: CalendarIcon,
+            change: `${stats.pendingLeavesRate} %`,
+            trend: stats.pendingLeavesRate >= 0 ? "up" : "down",
+          },
+        ]);
+      }
+    };
+    getStats();
+  }, [user]);
 
   const [recentActivity] = useState<Activity[]>([
     {

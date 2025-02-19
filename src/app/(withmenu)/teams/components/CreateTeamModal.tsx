@@ -71,8 +71,17 @@ export function CreateTeamModal({
     return undefined;
   }, [managers, watch().managerId]);
 
+  const handleOutsideClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center">
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      onClick={handleOutsideClick}
+    >
       <div className="w-full max-w-md rounded-lg bg-white p-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold">

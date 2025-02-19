@@ -19,8 +19,17 @@ export const ValidateLeaveModal: FC<ValidateModalProps> = ({
   type,
   actionLoading,
 }) => {
+  const handleOutsideClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      onClick={handleOutsideClick}
+    >
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
         <div className="flex items-center justify-center mb-4">
           <div className="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100">

@@ -122,13 +122,16 @@ export default function LoginPage() {
           <div>
             <button
               disabled={
-                Boolean(error) ||
                 Boolean(errors.email) ||
                 Boolean(errors.password) ||
                 loading
               }
               type="submit"
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white ${
+                Boolean(errors.email) || Boolean(errors.password) || loading
+                  ? "bg-gray-400"
+                  : "bg-blue-600 hover:bg-blue-700"
+              } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
             >
               {loading ? "Chargement..." : "Se connecter"}
             </button>

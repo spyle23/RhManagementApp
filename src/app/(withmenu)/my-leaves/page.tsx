@@ -234,11 +234,11 @@ export default function MyLeavesPage() {
         </div>
 
         {/* Leaves List */}
-        {loading ? (
-          <LeavesSkeleton />
-        ) : (
-          <div className="bg-white shadow-sm rounded-lg">
-            <div className="overflow-x-auto">
+        <div className="bg-white shadow-sm rounded-lg">
+          <div className="overflow-x-auto">
+            {loading ? (
+              <LeavesSkeleton />
+            ) : (
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
@@ -348,23 +348,18 @@ export default function MyLeavesPage() {
                   ))}
                 </tbody>
               </table>
-            </div>
-            {/* Pagination Controls */}
-            <BasePagination
-              currPage={stateFilters.pageNumber}
-              onGoToSpecificPage={(v) =>
-                dispatchFilters({ type: "goSpecificPage", value: v })
-              }
-              onNext={() =>
-                dispatchFilters({ type: "goNext", value: undefined })
-              }
-              onPrev={() =>
-                dispatchFilters({ type: "goPrev", value: undefined })
-              }
-              totalPage={data.totalPage}
-            />
+            )}
           </div>
-        )}
+        </div>
+        <BasePagination
+          currPage={stateFilters.pageNumber}
+          onGoToSpecificPage={(v) =>
+            dispatchFilters({ type: "goSpecificPage", value: v })
+          }
+          onNext={() => dispatchFilters({ type: "goNext", value: undefined })}
+          onPrev={() => dispatchFilters({ type: "goPrev", value: undefined })}
+          totalPage={data.totalPage}
+        />
       </div>
     </>
   );
