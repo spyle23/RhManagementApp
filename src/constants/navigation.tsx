@@ -24,7 +24,6 @@ export const navigation = {
     { name: "Paramètres", href: "/settings", icon: Cog6ToothIcon },
   ],
   Manager: [
-    { name: "Dashboard", href: "/dashboard", icon: ChartBarIcon },
     { name: "Mon Équipe", href: "/my-team", icon: UsersIcon },
     { name: "Collaborateurs", href: "/employees", icon: UsersIcon },
     { name: "Fiches de paies", href: "/payslip", icon: DocumentTextIcon },

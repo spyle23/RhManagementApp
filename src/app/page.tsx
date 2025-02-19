@@ -15,7 +15,7 @@ export default function GuardPage() {
         router.push("/signin");
       } else if (user && location === "/") {
         // If user is authenticated and on root path, redirect based on role
-        router.push(user.role !== "Employee" ? "/dashboard" : "/my-leaves");
+        router.push(user.role === "Employee" ? "/my-leaves" : user.role === "Manager" ? "/my-team" : "/dashboard");
       }
     }
   }, [user, loadingApp]);
