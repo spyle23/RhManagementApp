@@ -271,7 +271,7 @@ export const AddUserModal: FC<AddUserModalProps> = ({
                 />
               </div>
             ) : (
-              <Dropzone onFinished={handleUploadFile} type="image/*" />
+              <Dropzone onFinished={handleUploadFile} type="image/*" text="Ajouter une photo de profil" />
             )}
           </div>
           <div className="flex mb-4 border-b w-full justify-between">
