@@ -67,37 +67,43 @@ export default function MyLeavesPage() {
   };
 
   const handleSubmit = async (val: LeaveForm) => {
-    // voir si la durée ne dépasse pas le solde de congé en fonction du type de congé
-    const duration = calculDuration(
-      new Date(val.startDate!),
-      new Date(val.endDate!)
-    );
+    try {
+      // voir si la durée ne dépasse pas le solde de congé en fonction du type de congé
+      const duration = calculDuration(
+        new Date(val.startDate!),
+        new Date(val.endDate!)
+      );
 
-    const condition =
-      val.type === LeaveType.holiday
-        ? sold.holidayBalance - duration
-        : sold.balancePermission - duration;
-    if (condition < 0) {
-      alert(`Les soldes sont inssufisants`);
-      return;
+      const condition =
+        val.type === LeaveType.holiday
+          ? sold.holidayBalance - duration
+          : sold.balancePermission - duration;
+      if (condition < 0) {
+        alert(`Les soldes sont inssufisants`);
+        return;
+      }
+
+      const submitFn = new CreateLeave(user?.token);
+      const createdLeave = await submitFn.execute({
+        ...val,
+        id: currLeave ? currLeave.id : null,
+        adminId: Number(val.adminId),
+        employeeId: user!.userId,
+      });
+
+      setSold((curr) => ({
+        balancePermission:
+          val.type === LeaveType.permission
+            ? condition
+            : curr.balancePermission,
+        holidayBalance:
+          val.type === LeaveType.holiday ? condition : curr.holidayBalance,
+      }));
+
+      currLeave ? updateItem(createdLeave) : addItem(createdLeave);
+    } catch (error) {
+      alert((error as any).message);
     }
-
-    const submitFn = new CreateLeave(user?.token);
-    const createdLeave = await submitFn.execute({
-      ...val,
-      id: currLeave ? currLeave.id : null,
-      adminId: Number(val.adminId),
-      employeeId: user!.userId,
-    });
-
-    setSold((curr) => ({
-      balancePermission:
-        val.type === LeaveType.permission ? condition : curr.balancePermission,
-      holidayBalance:
-        val.type === LeaveType.holiday ? condition : curr.holidayBalance,
-    }));
-
-    currLeave ? updateItem(createdLeave) : addItem(createdLeave);
   };
 
   const handleClose = () => {

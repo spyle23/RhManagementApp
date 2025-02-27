@@ -19,6 +19,14 @@ export default class CreateLeave
       body: JSON.stringify(data),
     });
 
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(
+        errorMessage ||
+          "Une erreur s'est produite lors de la création de l'utilisateur"
+      );
+    }
+
     return await response.json();
   }
 }
